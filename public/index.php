@@ -7,6 +7,7 @@
   </head>
 
   <body>
+    <!-- Public start page -->
     <h1>Globe Bank: Coming Soon</h1>
   </body>
 </html>
