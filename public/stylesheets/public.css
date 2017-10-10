@@ -70,6 +70,7 @@ navigation {
   width: 25%;
   height: 100%;
   background: #7a6855;
+  min-height: 100vh;
 }
 
 navigation a {
@@ -137,6 +138,7 @@ navigation li {
   padding-left: 0;
   vertical-align: top;
   background: #ffffff;
+  min-height: 100vh;
 }
 
 #page h1 {
