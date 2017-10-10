@@ -25,7 +25,6 @@ if(is_post_request()) {
     redirect_to(url_for('/staff/pages/show.php?id=' . $id));
   } else {
     $errors = $result;
-    //var_dump($errors);
   }
 
 } else {
@@ -95,7 +94,7 @@ mysqli_free_result($page_set);
         <dt>Visible</dt>
         <dd>
           <input type="hidden" name="visible" value="0" />
-          <input type="checkbox" name="visible" value="1"<?php if($page['subject_id'] == "1") { echo " checked"; } ?> />
+          <input type="checkbox" name="visible" value="1"<?php if($page['visible'] == "1") { echo " checked"; } ?> />
         </dd>
       </dl>
       <dl>
@@ -105,7 +104,7 @@ mysqli_free_result($page_set);
         </dd>
       </dl>
       <div id="operations">
-        <input type="submit" value="Save Page" />
+        <input type="submit" value="Edit Page" />
       </div>
     </form>
 

@@ -7,13 +7,11 @@ if(!isset($_GET['id'])) {
 }
 $id = $_GET['id'];
 
-// $menu_name = '';
-// $position = '';
-// $visible = '';
-
 if(is_post_request()) {
+
   // Handle form values sent by new.php
-  $subect = [];
+
+  $subject = [];
   $subject['id'] = $id;
   $subject['menu_name'] = $_POST['menu_name'] ?? '';
   $subject['position'] = $_POST['position'] ?? '';
@@ -55,22 +53,21 @@ mysqli_free_result($subject_set);
     <form action="<?php echo url_for('/staff/subjects/edit.php?id=' . h(u($id))); ?>" method="post">
       <dl>
         <dt>Menu Name</dt>
-        <dd><input type="text" name="menu_name" value="<?php echo h(u($subject['menu_name'])); ?>" /></dd>
+        <dd><input type="text" name="menu_name" value="<?php echo h($subject['menu_name']); ?>" /></dd>
       </dl>
       <dl>
         <dt>Position</dt>
         <dd>
           <select name="position">
-            <!-- <option value="1"<?php //if($subject['position'] == "1") { echo " selected"; } ?>>1</option> -->
-            <?php
-              for($i=1; $i <= $subject_count; $i++) {
-                echo "<option value=\"{$i}\"";
-                if($subject["position"] == $i) {
-                  echo " selected";
-                }
-                echo ">{$i}</option>";
+          <?php
+            for($i=1; $i <= $subject_count; $i++) {
+              echo "<option value=\"{$i}\"";
+              if($subject["position"] == $i) {
+                echo " selected";
               }
-            ?>
+              echo ">{$i}</option>";
+            }
+          ?>
           </select>
         </dd>
       </dl>
@@ -82,7 +79,7 @@ mysqli_free_result($subject_set);
         </dd>
       </dl>
       <div id="operations">
-        <input type="submit" value="Save Subject" />
+        <input type="submit" value="Edit Subject" />
       </div>
     </form>
 
