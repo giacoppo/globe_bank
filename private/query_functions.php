@@ -1,9 +1,16 @@
 <?php
 
-  function find_all_subjects() {
+  // Subjects
+
+  function find_all_subjects($options=[]) {
     global $db;
 
+    $visible = $options['visible'] ?? false;
+
     $sql = "SELECT * FROM subjects ";
+    if($visible) {
+      $sql .= "WHERE visible = true ";
+    }
     $sql .= "ORDER BY position ASC";
     //echo $sql;
     $result = mysqli_query($db, $sql);
@@ -11,11 +18,17 @@
     return $result;
   }
 
-  function find_subject_by_id($id) {
+  function find_subject_by_id($id, $options=[]) {
     global $db;
 
+    $visible = $options['visible'] ?? false;
+
     $sql = "SELECT * FROM subjects ";
-    $sql .= "WHERE id='" . db_escape($db, $id) . "'";
+    $sql .= "WHERE id='" . db_escape($db, $id) . "' ";
+    if($visible) {
+      $sql .= "AND visible = true";
+    }
+    // echo $sql;
     $result = mysqli_query($db, $sql);
     confirm_result_set($result);
     $subject = mysqli_fetch_assoc($result);
@@ -24,7 +37,6 @@
   }
 
   function validate_subject($subject) {
-
     $errors = [];
 
     // menu_name
@@ -73,8 +85,6 @@
     // For INSERT statements, $result is true/false
     if($result) {
       return true;
-      // $new_id = mysqli_insert_id($db);
-      // redirect_to(url_for('/staff/subjects/show.php?id=' . $new_id));
     } else {
       // INSERT failed
       echo mysqli_error($db);
@@ -108,6 +118,7 @@
       db_disconnect($db);
       exit;
     }
+
   }
 
   function delete_subject($id) {
@@ -129,6 +140,8 @@
     }
   }
 
+  // Pages
+
   function find_all_pages() {
     global $db;
 
@@ -139,11 +152,16 @@
     return $result;
   }
 
-  function find_page_by_id($id) {
+  function find_page_by_id($id, $options=[]) {
     global $db;
 
+    $visible = $options['visible'] ?? false;
+
     $sql = "SELECT * FROM pages ";
-    $sql .= "WHERE id='" . db_escape($db, $id) . "'";
+    $sql .= "WHERE id='" . db_escape($db, $id) . "' ";
+    if($visible) {
+      $sql .= "AND visible = true";
+    }
     $result = mysqli_query($db, $sql);
     confirm_result_set($result);
     $page = mysqli_fetch_assoc($result);
@@ -152,10 +170,9 @@
   }
 
   function validate_page($page) {
-
     $errors = [];
 
-    // subject ID
+    // subject_id
     if(is_blank($page['subject_id'])) {
       $errors[] = "Subject cannot be blank.";
     }
@@ -170,6 +187,7 @@
     if(!has_unique_page_menu_name($page['menu_name'], $current_id)) {
       $errors[] = "Menu name must be unique.";
     }
+
 
     // position
     // Make sure we are working with an integer
@@ -188,7 +206,7 @@
       $errors[] = "Visible must be true or false.";
     }
 
-    // Content
+    // content
     if(is_blank($page['content'])) {
       $errors[] = "Content cannot be blank.";
     }
@@ -207,11 +225,11 @@
     $sql = "INSERT INTO pages ";
     $sql .= "(subject_id, menu_name, position, visible, content) ";
     $sql .= "VALUES (";
-    $sql .= "'" . db_escape($db, $page['subject_id']) . "', ";
-    $sql .= "'" . db_escape($db, $page['menu_name']) . "', ";
-    $sql .= "'" . db_escape($db, $page['position']) . "', ";
-    $sql .= "'" . db_escape($db, $page['visible']) . "', ";
-    $sql .= "'" . db_escape($db, $page['content']) . "' ";
+    $sql .= "'" . db_escape($db, $page['subject_id']) . "',";
+    $sql .= "'" . db_escape($db, $page['menu_name']) . "',";
+    $sql .= "'" . db_escape($db, $page['position']) . "',";
+    $sql .= "'" . db_escape($db, $page['visible']) . "',";
+    $sql .= "'" . db_escape($db, $page['content']) . "'";
     $sql .= ")";
     $result = mysqli_query($db, $sql);
     // For INSERT statements, $result is true/false
@@ -252,6 +270,7 @@
       db_disconnect($db);
       exit;
     }
+
   }
 
   function delete_page($id) {
@@ -272,5 +291,22 @@
       exit;
     }
   }
+
+  function find_pages_by_subject_id($subject_id, $options=[]) {
+    global $db;
+
+    $visible = $options['visible'] ?? false;
+
+    $sql = "SELECT * FROM pages ";
+    $sql .= "WHERE subject_id='" . db_escape($db, $subject_id) . "' ";
+    if($visible) {
+      $sql .= "AND visible = true ";
+    }
+    $sql .= "ORDER BY position ASC";
+    $result = mysqli_query($db, $sql);
+    confirm_result_set($result);
+    return $result;
+  }
+
 
 ?>
