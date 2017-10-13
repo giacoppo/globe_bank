@@ -2,8 +2,14 @@
 
 require_once('../../../private/initialize.php');
 
+require_login();
+
+$subject_set = find_all_subjects();
+$subject_count = mysqli_num_rows($subject_set) + 1;
+mysqli_free_result($subject_set);
+
 if(is_post_request()) {
-  // Handle form values sent by new.php
+
   $subject = [];
   $subject['menu_name'] = $_POST['menu_name'] ?? '';
   $subject['position'] = $_POST['position'] ?? '';
@@ -12,33 +18,20 @@ if(is_post_request()) {
   $result = insert_subject($subject);
   if($result === true) {
     $new_id = mysqli_insert_id($db);
+    $_SESSION['message'] = 'The subject was created successfully.';
     redirect_to(url_for('/staff/subjects/show.php?id=' . $new_id));
   } else {
     $errors = $result;
   }
 
-
 } else {
   // display the blank form
-  // redirect_to(url_for('/staff/subjects/new.php'));
+  $subject = [];
+  $subject["menu_name"] = '';
+  $subject["position"] = $subject_count;
+  $subject["visible"] = '';
 }
 
-$subject_set = find_all_subjects();
-$subject_count = mysqli_num_rows($subject_set) + 1;
-mysqli_free_result($subject_set);
-
-$subject = [];
-$subject['position'] = $subject_count;
-
-// $test = $_GET['test'] ?? '';
-//
-// if($test == '404') {
-//   error_404();
-// } elseif($test == '500') {
-//   error_500();
-// } elseif($test == 'redirect') {
-//   redirect_to(url_for('/staff/subjects/index.php'));
-// }
 ?>
 
 <?php $page_title = 'Create Subject'; ?>
@@ -56,22 +49,21 @@ $subject['position'] = $subject_count;
     <form action="<?php echo url_for('/staff/subjects/new.php'); ?>" method="post">
       <dl>
         <dt>Menu Name</dt>
-        <dd><input type="text" name="menu_name" value="" /></dd>
+        <dd><input type="text" name="menu_name" value="<?php echo h($subject['menu_name']); ?>" /></dd>
       </dl>
       <dl>
         <dt>Position</dt>
         <dd>
           <select name="position">
-            <!-- <option value="1">1</option> -->
-            <?php
-              for($i=1; $i <= $subject_count; $i++) {
-                echo "<option value=\"{$i}\"";
-                if($subject["position"] == $i) {
-                  echo " selected";
-                }
-                echo ">{$i}</option>";
+          <?php
+            for($i=1; $i <= $subject_count; $i++) {
+              echo "<option value=\"{$i}\"";
+              if($subject["position"] == $i) {
+                echo " selected";
               }
-            ?>
+              echo ">{$i}</option>";
+            }
+          ?>
           </select>
         </dd>
       </dl>
@@ -79,7 +71,7 @@ $subject['position'] = $subject_count;
         <dt>Visible</dt>
         <dd>
           <input type="hidden" name="visible" value="0" />
-          <input type="checkbox" name="visible" value="1" />
+          <input type="checkbox" name="visible" value="1"<?php if($subject['visible'] == 1) { echo " checked"; } ?> />
         </dd>
       </dl>
       <div id="operations">
